@@ -26,18 +26,18 @@ class LoginSerializer(serializers.Serializer):
         username = data.get("username")
         password = data.get("password")
 
+        # Authenticate using Django's built-in method
         user = authenticate(username=username, password=password)
-
         if user is None:
-            raise serializers.ValidationError("Invalid username or password")
-        
+           raise serializers.ValidationError("Invalid username or password")
         if not user.is_active:
-            raise serializers.ValidationError("User account is not active")
+           raise serializers.ValidationError("User account is not active")
 
-        # Generate JWT tokens
+    # Generate JWT tokens for the authenticated user
         refresh = RefreshToken.for_user(user)
-        return {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "user": UserSerializer(user).data,
-        }
+
+    # Add the token data and serialized user info into the validated output.
+        data["user"] = UserSerializer(user).data
+        data["refresh"] = str(refresh)
+        data["access"] = str(refresh.access_token)
+        return data

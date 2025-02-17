@@ -26,38 +26,15 @@ class LoginView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+    # Validate incoming data and perform authentication inside the serializer.
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        username = serializer.validated_data['username']
-        password = serializer.validated_data['password']
-        
-        # Check if user exists firs
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response(
-                {'error': 'No user found with this username'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        
-        # Attempt authentication
-        user = authenticate(username=username, password=password)
-        
-        if not user:
-            return Response(
-                {'error': 'Incorrect password'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        if not user.is_active:
-            return Response(
-                {'error': 'This account is inactive'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        tokens = get_tokens_for_user(user)
+    
+        validated_data = serializer.validated_data
+    
+    # Return the tokens and user information as response.
         return Response({
-            'user': UserSerializer(user).data,
-            'access_token': tokens['access'],
-            'refresh_token': tokens['refresh']
+          "user": validated_data.get("user"),
+          "access_token": validated_data.get("access"),
+          "refresh_token": validated_data.get("refresh"),
         }, status=status.HTTP_200_OK)

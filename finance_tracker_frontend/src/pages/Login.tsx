@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { loginUser } from "../api";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // 🔹 Define Validation Schema
 const loginSchema = z.object({
@@ -12,13 +12,12 @@ const loginSchema = z.object({
 });
 
 // 🔹 Define Login Form Type
-type LoginFormData = {
-  username: string;
-  password: string;
-};
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Login({ setIsAuthenticated }: { setIsAuthenticated: (auth: boolean) => void }) {
   const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
@@ -32,47 +31,46 @@ export default function Login({ setIsAuthenticated }: { setIsAuthenticated: (aut
         const payload = JSON.parse(atob(token.split(".")[1]));
         if (payload.exp * 1000 > Date.now()) {
           setIsAuthenticated(true);
+          navigate("/transactions");
         } else {
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Invalid token format:", error);
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
+        setIsAuthenticated(false);
       }
     }
-  }, [setIsAuthenticated]);
+  }, [setIsAuthenticated, navigate]);
 
   // 🔹 Handle Form Submission
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    setError(null);
     try {
-      console.log("Sending login request with data:", data); // Debugging
-      const response = await loginUser(data);
-      console.log("Login response:", response); // Debugging
-  
-      if (!response || !response.access) {
-        throw new Error("Invalid login response: No token received");
-      }
-  
-      localStorage.setItem("token", response.access);
+      await loginUser(data);
       setIsAuthenticated(true);
-      alert("Login successful!");
       navigate("/transactions");
     } catch (error: any) {
-      console.error("Login error:", error);
-      const errorMessage =
-        error.response?.data?.detail || error.response?.data?.message || "Login failed. Please try again.";
-      alert(errorMessage);
+      setError(error.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
+            <label htmlFor="username" className="sr-only">Username</label>
             <input
+              id="username"
               {...register("username")}
               placeholder="Username"
               className="w-full p-2 border rounded focus:ring focus:ring-blue-300"
@@ -81,7 +79,9 @@ export default function Login({ setIsAuthenticated }: { setIsAuthenticated: (aut
           </div>
 
           <div>
+            <label htmlFor="password" className="sr-only">Password</label>
             <input
+              id="password"
               {...register("password")}
               type="password"
               placeholder="Password"
@@ -90,8 +90,12 @@ export default function Login({ setIsAuthenticated }: { setIsAuthenticated: (aut
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">
-            Login
+          <button 
+            type="submit" 
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

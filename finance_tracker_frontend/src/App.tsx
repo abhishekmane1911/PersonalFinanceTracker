@@ -1,56 +1,43 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Transactions from "./components/Transactions";
+import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import { setAuthToken, fetchTransactions } from "./api";
+import Dashboard from "./pages/Dashboard";
+import Transactions from "./pages/Transactions";
+import Budgets from "./pages/Budgets";
+import CurrencyConverter from "./pages/CurrencyConverter";
+import ExportReport from "./pages/ExportReport";
 
 const App = () => {
-  const [transactions, setTransactions] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token")); // Ensure initial state
+    // Initialize authentication state based on token presence
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("access_token"));
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setAuthToken(token);
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      const loadTransactions = async () => {
-        try {
-          const data = await fetchTransactions();
-          console.log("Fetched transactions:", data); // Debugging log
-          setTransactions(data);
-        } catch (error) {
-          console.error("Error fetching transactions:", error);
-        }
-      };
-
-      loadTransactions();
-    }
-  }, [isAuthenticated]); // Ensures data is fetched when authentication status changes
-
-  return (
-    <Router>
-      <div>
-        <h1>Finance Tracker</h1>
-        <Routes>
-          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/transactions"
-            element={isAuthenticated ? <Transactions transactions={transactions} /> : <Navigate to="/login" />}
-          />
-          <Route path="*" element={<Navigate to={isAuthenticated ? "/transactions" : "/login"} />} />
-        </Routes>
-      </div>
-    </Router>
-  );
+    return (
+        <Router>
+            <Navbar />
+            <Routes>
+                {/* If authenticated, navigate to dashboard; else render Login and pass the setter */}
+                <Route 
+                    path="/" 
+                    element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login setIsAuthenticated={setIsAuthenticated} />} 
+                />
+                <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+                <Route path="/signup" element={<Signup />} />
+                {isAuthenticated && (
+                    <>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/transactions" element={<Transactions />} />
+                        <Route path="/budgets" element={<Budgets />} />
+                        <Route path="/currency-converter" element={<CurrencyConverter />} />
+                        <Route path="/export-report" element={<ExportReport />} />
+                    </>
+                )}
+                {/* Fallback to home if path does not match */}
+                <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+        </Router>
+    );
 };
 
 export default App;
