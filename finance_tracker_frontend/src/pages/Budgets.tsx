@@ -13,7 +13,10 @@ const Budgets: React.FC = () => {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [newBudget, setNewBudget] = useState<{ month: string; limit: number }>({ month: "", limit: 0 });
+  const [newBudget, setNewBudget] = useState<{ month: string; limit: number }>({
+    month: "",
+    limit: 0,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,7 +54,10 @@ const Budgets: React.FC = () => {
     e.preventDefault();
     try {
       await createBudget(newBudget); // Assuming createBudget is a function that sends a POST request
-      setBudgets((prev) => [...prev, { ...newBudget, spent_amount: 0, remaining_amount: newBudget.limit }]);
+      setBudgets((prev) => [
+        ...prev,
+        { ...newBudget, spent_amount: 0, remaining_amount: newBudget.limit },
+      ]);
       setNewBudget({ month: "", limit: 0 }); // Reset form
     } catch (err: any) {
       setError(err.message || "Failed to create budget");
@@ -59,64 +65,75 @@ const Budgets: React.FC = () => {
   };
 
   return (
-    <div>
-      <h2>Budgets</h2>
+    <div className="p-6 h-screen max-w-4xl mx-auto">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Budgets</h2>
 
-      {loading && <p>Loading budgets…</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading && (
+        <p className="text-center text-gray-500">Loading budgets...</p>
+      )}
+      {error && <p className="text-red-500 text-center">{error}</p>}
 
-      {!loading && !error && budgets.length === 0 && <p>No budgets found.</p>}
-
-      {!loading && !error && budgets.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Month</th>
-              <th>Budget Limit</th>
-              <th>Spent Amount</th>
-              <th>Remaining Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {budgets.map((budget) => (
-              <tr key={budget.month}>
-                <td>{budget.month}</td>
-                <td>{budget.limit}</td>
-                <td>{budget.spent_amount}</td>
-                <td>{budget.remaining_amount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {!loading && !error && budgets.length === 0 && (
+        <p className="text-center text-gray-500">No budgets found.</p>
       )}
 
-      <h3>Create New Budget</h3>
-      <form onSubmit={handleSubmit}>
+      {!loading && !error && budgets.length > 0 && (
+        <div className="overflow-x-auto shadow-md rounded-lg">
+          <table className="min-w-full bg-white text-sm text-gray-700">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-2 px-4 border-b">Month</th>
+                <th className="py-2 px-4 border-b">Budget Limit</th>
+                <th className="py-2 px-4 border-b">Spent Amount</th>
+                <th className="py-2 px-4 border-b">Remaining Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {budgets.map((budget) => (
+                <tr key={budget.month} className="border-b">
+                  <td className="py-2 px-4">{budget.month}</td>
+                  <td className="py-2 px-4">{budget.limit}</td>
+                  <td className="py-2 px-4">{budget.spent_amount}</td>
+                  <td className="py-2 px-4">{budget.remaining_amount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <h3 className="text-xl font-semibold text-gray-800 mt-8">
+        Create New Budget
+      </h3>
+      <form onSubmit={handleSubmit} className="space-y-4 mt-4">
         <div>
-          <label>
-            Month:
-            <input
-              type="text"
-              name="month"
-              value={newBudget.month}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
+          <label className="block text-gray-700">Month:</label>
+          <input
+            type="text"
+            name="month"
+            value={newBudget.month}
+            onChange={handleInputChange}
+            required
+            className="mt-2 px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
         <div>
-          <label>
-            Budget Limit:
-            <input
-              type="number"
-              name="limit"
-              value={newBudget.limit}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
+          <label className="block text-gray-700">Budget Limit:</label>
+          <input
+            type="number"
+            name="limit"
+            value={newBudget.limit}
+            onChange={handleInputChange}
+            required
+            className="mt-2 px-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
-        <button type="submit">Create Budget</button>
+        <button
+          type="submit"
+          className="mt-4 w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Create Budget
+        </button>
       </form>
     </div>
   );

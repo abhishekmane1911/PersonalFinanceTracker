@@ -5,9 +5,13 @@ import { registerUser } from "../api";
 import { useNavigate } from "react-router-dom";
 
 const signupSchema = z.object({
-  username: z.string().min(3, { message: "Username must be at least 3 characters long" }),
+  username: z
+    .string()
+    .min(3, { message: "Username must be at least 3 characters long" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters long" }),
 });
 
 type SignupFormData = {
@@ -18,7 +22,11 @@ type SignupFormData = {
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm<SignupFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
 
@@ -35,32 +43,63 @@ export default function Signup() {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <input
-            {...register("username")}
-            placeholder="Username"
-            className={`w-full p-2 border rounded ${errors.username ? "border-red-500" : "border-gray-300"}`}
-          />
-          {errors.username && <p className="text-red-500">{errors.username.message}</p>}
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Sign Up
+        </h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div>
+            <input
+              {...register("username")}
+              placeholder="Username"
+              className={`w-full p-3 border rounded-md text-gray-700 ${
+                errors.username ? "border-red-500" : "border-gray-300"
+              } focus:ring-2 focus:ring-blue-500`}
+            />
+            {errors.username && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.username.message}
+              </p>
+            )}
+          </div>
 
-          <input
-            {...register("email")}
-            placeholder="Email"
-            className={`w-full p-2 border rounded ${errors.email ? "border-red-500" : "border-gray-300"}`}
-          />
-          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+          <div>
+            <input
+              {...register("email")}
+              placeholder="Email"
+              className={`w-full p-3 border rounded-md text-gray-700 ${
+                errors.email ? "border-red-500" : "border-gray-300"
+              } focus:ring-2 focus:ring-blue-500`}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
 
-          <input
-            {...register("password")}
-            type="password"
-            placeholder="Password"
-            className={`w-full p-2 border rounded ${errors.password ? "border-red-500" : "border-gray-300"}`}
-          />
-          {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+          <div>
+            <input
+              {...register("password")}
+              type="password"
+              placeholder="Password"
+              className={`w-full p-3 border rounded-md text-gray-700 ${
+                errors.password ? "border-red-500" : "border-gray-300"
+              } focus:ring-2 focus:ring-blue-500`}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
 
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Sign Up</button>
+          <button
+            type="submit"
+            className="w-full py-3 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Sign Up
+          </button>
         </form>
       </div>
     </div>

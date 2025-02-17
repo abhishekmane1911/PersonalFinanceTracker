@@ -8,6 +8,7 @@ import Transactions from "./pages/Transactions";
 import Budgets from "./pages/Budgets";
 import CurrencyConverter from "./pages/CurrencyConverter";
 import ExportReport from "./pages/ExportReport";
+import "./App.css";
 
 const App = () => {
     // Initialize authentication state based on token presence

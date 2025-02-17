@@ -38,20 +38,24 @@ const ExportReport: React.FC = () => {
   };
 
   return (
-    <div className="export-container">
-      <h2>Export Transactions</h2>
+    <div className="flex flex-col items-center justify-center p-6 bg-gray-100 min-h-screen">
+      <h2 className="text-3xl font-semibold text-gray-800 mb-6">Export Transactions</h2>
+      
       <button 
         onClick={handleExport} 
         disabled={loading}
-        className="export-button"
+        className={`w-full sm:w-auto py-3 px-6 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all`}
       >
         {loading ? 'Exporting...' : 'Download CSV'}
       </button>
-      
+  
       {error && (
-        <div className="error-message">
-          ⚠️ {error}
-          <button onClick={() => setError('')} className="dismiss-button">
+        <div className="mt-4 bg-red-100 text-red-800 p-4 rounded-md flex items-center justify-between w-full sm:w-auto">
+          <span>⚠️ {error}</span>
+          <button 
+            onClick={() => setError('')} 
+            className="text-red-600 font-semibold hover:text-red-800 focus:outline-none"
+          >
             ×
           </button>
         </div>
