@@ -36,6 +36,13 @@ Finance Tracker is a web application that helps users manage their expenses, tra
 
 ---
 
+### **Screenshots**
+
+<img src="public/1.png">
+<img src="public/2.png">
+<img src="public/3.png">
+<img src="public/4.png">
+
 ## 📦 Installation
 
 ### 1️⃣ Clone the Repository
@@ -111,18 +118,14 @@ Replace values accordingly
 
 | Endpoint                  | Method | Description                    |
 | ------------------------- | ------ | ------------------------------ |
-| `/api/auth/register/`     | POST   | Register a new user            |
-| `/api/auth/login/`        | POST   | Log in and get JWT tokens      |
-| `/api/auth/logout/`       | POST   | Log out the user               |
-| `/api/auth/user/`         | GET    | Get authenticated user data    |
+| `/accounts/singup/`       | POST   | Register a new user            |
+| `/accounts/login/`        | POST   | Log in and get JWT tokens      |
+| `/accounts/logout/`       | POST   | Log out the user               |
 | `/api/transactions/`      | GET    | Get all transactions           |
 | `/api/transactions/`      | POST   | Add a new transaction          |
 | `/api/transactions/{id}/` | GET    | Get a specific transaction     |
-| `/api/transactions/{id}/` | PUT    | Update a transaction           |
 | `/api/transactions/{id}/` | DELETE | Delete a transaction           |
 | `/api/budgets/`           | GET    | Get budget details             |
 | `/api/budgets/`           | POST   | Create a new budget            |
-| `/api/budgets/{id}/`      | PUT    | Update budget details          |
-| `/api/budgets/{id}/`      | DELETE | Delete a budget                |
 | `/api/currency-convert/`  | POST   | Convert currency               |
 | `/api/export-report/`     | GET    | Export financial report as CSV |
