@@ -35,11 +35,11 @@ const Navbar: React.FC = () => {
         <div className="text-xl font-semibold">MyApp</div>
 
         {/* Navbar links */}
-        <div className="hidden md:flex space-x-6">
+        <div className="hidden md:flex space-x-6 text-white">
           <Link
             to="/dashboard"
-            className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/dashboard") ? "bg-indigo-700" : "hover:bg-indigo-500"
+            className={`flex text-black items-center space-x-2 p-2 rounded-md ${
+              isActive("/dashboard") ? "bg-indigo-900 text-white " : "hover:bg-black hover:text-white"
             }`}
           >
             <FiHome className="w-5 h-5" />
@@ -49,8 +49,8 @@ const Navbar: React.FC = () => {
             to="/transactions"
             className={`flex items-center space-x-2 p-2 rounded-md ${
               isActive("/transactions")
-                ? "bg-indigo-700"
-                : "hover:bg-indigo-500"
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiDollarSign className="w-5 h-5" />
@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
           <Link
             to="/budgets"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/budgets") ? "bg-indigo-700" : "hover:bg-indigo-500"
+              isActive("/budgets") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
             }`}
           >
             <FiPieChart className="w-5 h-5" />
@@ -69,8 +69,8 @@ const Navbar: React.FC = () => {
             to="/currency-converter"
             className={`flex items-center space-x-2 p-2 rounded-md ${
               isActive("/currency-converter")
-                ? "bg-indigo-700"
-                : "hover:bg-indigo-500"
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiRepeat className="w-5 h-5" />
@@ -80,8 +80,8 @@ const Navbar: React.FC = () => {
             to="/export-report"
             className={`flex items-center space-x-2 p-2 rounded-md ${
               isActive("/export-report")
-                ? "bg-indigo-700"
-                : "hover:bg-indigo-500"
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiFileText className="w-5 h-5" />
