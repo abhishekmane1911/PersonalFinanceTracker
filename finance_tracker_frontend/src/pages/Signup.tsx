@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { registerUser } from "../api";
 import { useNavigate } from "react-router-dom";
+import { BackgroundLines } from "../components/ui/BackgroundLines.tsx"; // Import the BackgroundLines component
+
 
 const signupSchema = z.object({
   username: z
@@ -42,8 +44,9 @@ export default function Signup() {
   };
 
   return (
+    <BackgroundLines svgOptions={{ duration: 10 }} className="relative">
     <div className="flex items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm z-10 hover:shadow-indigo-500/50">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Sign Up
         </h2>
@@ -103,5 +106,6 @@ export default function Signup() {
         </form>
       </div>
     </div>
+    </BackgroundLines>
   );
 }

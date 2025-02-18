@@ -145,8 +145,8 @@ const Transactions = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-6">Transactions</h1>
       {/* Filter Section */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="flex flex-col w-full sm:w-1/2 lg:w-1/4">
+      <div className="flex flex-wrap gap-4 mb-6 text-black">
+        <div className="flex flex-col w-full sm:w-1/2 lg:w-1/4 ">
           <label htmlFor="start" className="text-lg font-semibold">
             Start Date:
           </label>
@@ -185,7 +185,7 @@ const Transactions = () => {
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <div className="overflow-x-auto text-black">
+        <div className="overflow-x-auto text-black bg-white">
           <table className="min-w-full table-auto border-collapse">
             <thead>
               <tr className="bg-gray-100 text-left">
@@ -194,6 +194,7 @@ const Transactions = () => {
                 <th className="px-4 py-2">Category</th>
                 <th className="px-4 py-2">Type</th>
                 <th className="px-4 py-2">Description</th>
+                <th className="px-4 py-2"></th>
               </tr>
             </thead>
             <tbody>

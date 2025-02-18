@@ -11,6 +11,7 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
+import GradientText from "./ui/GradientText";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -32,17 +33,28 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="bg-black text-white shadow-md sticky mr-5 ml-5 top-4 z-10 rounded-2xl backdrop-blur-lg">
+    <nav className="bg-black fixed text-white shadow-md sticky mr-5 ml-5 top-4 z-10 rounded-2xl backdrop-blur-lg">
       <div className="max-w-screen-xl mx-auto flex justify-between items-center p-4">
         {/* Logo */}
-        <div className="text-xl font-semibold">MyApp</div>
+        <div className="text-xl font-semibold">
+          <GradientText
+            colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
+            animationSpeed={3}
+            showBorder={false}
+            className="custom-class"
+          >
+            PersonalFinanaceTracker
+          </GradientText>
+        </div>
 
         {/* Desktop Navbar Links */}
         <div className="hidden md:flex space-x-6">
           <Link
             to="/dashboard"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/dashboard") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
+              isActive("/dashboard")
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiHome className="w-5 h-5" />
@@ -51,7 +63,9 @@ const Navbar: React.FC = () => {
           <Link
             to="/transactions"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/transactions") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
+              isActive("/transactions")
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiDollarSign className="w-5 h-5" />
@@ -60,7 +74,9 @@ const Navbar: React.FC = () => {
           <Link
             to="/budgets"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/budgets") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
+              isActive("/budgets")
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiPieChart className="w-5 h-5" />
@@ -69,7 +85,9 @@ const Navbar: React.FC = () => {
           <Link
             to="/currency-converter"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/currency-converter") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
+              isActive("/currency-converter")
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiRepeat className="w-5 h-5" />
@@ -78,7 +96,9 @@ const Navbar: React.FC = () => {
           <Link
             to="/export-report"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/export-report") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
+              isActive("/export-report")
+                ? "bg-indigo-900 text-white"
+                : "hover:bg-black hover:text-white"
             }`}
           >
             <FiFileText className="w-5 h-5" />
@@ -116,14 +136,25 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Toggle Button */}
         <div className="md:hidden flex items-center">
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
-            {isMobileMenuOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="text-white"
+          >
+            {isMobileMenuOpen ? (
+              <FiX className="h-6 w-6" />
+            ) : (
+              <FiMenu className="h-6 w-6" />
+            )}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      <div className={`${isMobileMenuOpen ? "block" : "hidden"} md:hidden bg-gray-900 p-4`}>
+      <div
+        className={`${
+          isMobileMenuOpen ? "block" : "hidden"
+        } md:hidden bg-gray-900 p-4`}
+      >
         <Link
           to="/dashboard"
           className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
