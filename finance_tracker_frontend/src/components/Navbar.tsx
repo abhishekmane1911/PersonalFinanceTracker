@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
             showBorder={false}
             className="custom-class"
           >
-            PersonalFinanaceTracker
+            PersonalFinanceTracker
           </GradientText>
         </div>
 
