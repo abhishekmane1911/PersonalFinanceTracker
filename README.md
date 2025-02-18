@@ -38,10 +38,10 @@ Finance Tracker is a web application that helps users manage their expenses, tra
 
 ### **Screenshots**
 
-<img src="public/1.png">
-<img src="public/2.png">
-<img src="public/3.png">
-<img src="public/4.png">
+<img src="finance_tracker_frontend/public/1.png">
+<img src="finance_tracker_frontend/public/2.png">
+<img src="finance_tracker_frontend/public/3.png">
+<img src="finance_tracker_frontend/public/4.png">
 
 ## 📦 Installation
 
