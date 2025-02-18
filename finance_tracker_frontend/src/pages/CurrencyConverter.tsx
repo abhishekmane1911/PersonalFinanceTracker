@@ -2,6 +2,30 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { convertCurrency } from "../api";
 
+// Currency list with names and flags
+const currencies = [
+  { code: "USD", name: "United States Dollar", flag: "🇺🇸" },
+  { code: "INR", name: "Indian Rupee", flag: "🇮🇳" },
+  { code: "EUR", name: "Euro", flag: "🇪🇺" },
+  { code: "GBP", name: "British Pound", flag: "🇬🇧" },
+  { code: "JPY", name: "Japanese Yen", flag: "🇯🇵" },
+  { code: "CAD", name: "Canadian Dollar", flag: "🇨🇦" },
+  { code: "AUD", name: "Australian Dollar", flag: "🇦🇺" },
+  { code: "CNY", name: "Chinese Yuan", flag: "🇨🇳" },
+  { code: "CHF", name: "Swiss Franc", flag: "🇨🇭" },
+  { code: "SGD", name: "Singapore Dollar", flag: "🇸🇬" },
+  { code: "HKD", name: "Hong Kong Dollar", flag: "🇭🇰" },
+  { code: "NZD", name: "New Zealand Dollar", flag: "🇳🇿" },
+  { code: "KRW", name: "South Korean Won", flag: "🇰🇷" },
+  { code: "BRL", name: "Brazilian Real", flag: "🇧🇷" },
+  { code: "ZAR", name: "South African Rand", flag: "🇿🇦" },
+  { code: "SEK", name: "Swedish Krona", flag: "🇸🇪" },
+  { code: "NOK", name: "Norwegian Krone", flag: "🇳🇴" },
+  { code: "MXN", name: "Mexican Peso", flag: "🇲🇽" },
+  { code: "MYR", name: "Malaysian Ringgit", flag: "🇲🇾" },
+  { code: "RUB", name: "Russian Ruble", flag: "🇷🇺" },
+];
+
 const CurrencyConverter: React.FC = () => {
   const [amount, setAmount] = useState<number>(0);
   const [fromCurrency, setFromCurrency] = useState<string>("USD");
@@ -40,11 +64,9 @@ const CurrencyConverter: React.FC = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Amount Input */}
           <div>
-            <label
-              htmlFor="amount"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
               Amount:
             </label>
             <input
@@ -57,40 +79,45 @@ const CurrencyConverter: React.FC = () => {
             />
           </div>
 
+          {/* From Currency Dropdown */}
           <div>
-            <label
-              htmlFor="fromCurrency"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="fromCurrency" className="block text-sm font-medium text-gray-700">
               From Currency:
             </label>
-            <input
-              type="text"
+            <select
               id="fromCurrency"
               value={fromCurrency}
-              onChange={(e) => setFromCurrency(e.target.value.toUpperCase())}
-              required
+              onChange={(e) => setFromCurrency(e.target.value)}
               className="w-full text-black p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            >
+              {currencies.map((currency) => (
+                <option key={currency.code} value={currency.code}>
+                  {currency.flag} {currency.code} - {currency.name}
+                </option>
+              ))}
+            </select>
           </div>
 
+          {/* To Currency Dropdown */}
           <div>
-            <label
-              htmlFor="toCurrency"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="toCurrency" className="block text-sm font-medium text-gray-700">
               To Currency:
             </label>
-            <input
-              type="text"
+            <select
               id="toCurrency"
               value={toCurrency}
-              onChange={(e) => setToCurrency(e.target.value.toUpperCase())}
-              required
+              onChange={(e) => setToCurrency(e.target.value)}
               className="w-full text-black p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            >
+              {currencies.map((currency) => (
+                <option key={currency.code} value={currency.code}>
+                  {currency.flag} {currency.code} - {currency.name}
+                </option>
+              ))}
+            </select>
           </div>
 
+          {/* Convert Button */}
           <div className="flex justify-center">
             <button
               type="submit"
@@ -102,8 +129,10 @@ const CurrencyConverter: React.FC = () => {
           </div>
         </form>
 
+        {/* Error Message */}
         {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
 
+        {/* Conversion Result */}
         {result !== null && (
           <p className="mt-4 text-center text-lg text-gray-800">
             {amount} {fromCurrency} = {result} {toCurrency}

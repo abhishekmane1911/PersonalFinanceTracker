@@ -8,12 +8,15 @@ import {
   FiRepeat,
   FiFileText,
   FiLogOut,
+  FiMenu,
+  FiX,
 } from "react-icons/fi";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Check authentication status on mount and route change
   useEffect(() => {
@@ -29,17 +32,17 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="bg-indigo-600 text-white shadow-md sticky top-0 w-full z-10">
+    <nav className="bg-black text-white shadow-md sticky mr-5 ml-5 top-4 z-10 rounded-2xl backdrop-blur-lg">
       <div className="max-w-screen-xl mx-auto flex justify-between items-center p-4">
-        {/* Logo or title can go here */}
+        {/* Logo */}
         <div className="text-xl font-semibold">MyApp</div>
 
-        {/* Navbar links */}
-        <div className="hidden md:flex space-x-6 text-white">
+        {/* Desktop Navbar Links */}
+        <div className="hidden md:flex space-x-6">
           <Link
             to="/dashboard"
-            className={`flex text-black items-center space-x-2 p-2 rounded-md ${
-              isActive("/dashboard") ? "bg-indigo-900 text-white " : "hover:bg-black hover:text-white"
+            className={`flex items-center space-x-2 p-2 rounded-md ${
+              isActive("/dashboard") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
             }`}
           >
             <FiHome className="w-5 h-5" />
@@ -48,9 +51,7 @@ const Navbar: React.FC = () => {
           <Link
             to="/transactions"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/transactions")
-                ? "bg-indigo-900 text-white"
-                : "hover:bg-black hover:text-white"
+              isActive("/transactions") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
             }`}
           >
             <FiDollarSign className="w-5 h-5" />
@@ -68,9 +69,7 @@ const Navbar: React.FC = () => {
           <Link
             to="/currency-converter"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/currency-converter")
-                ? "bg-indigo-900 text-white"
-                : "hover:bg-black hover:text-white"
+              isActive("/currency-converter") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
             }`}
           >
             <FiRepeat className="w-5 h-5" />
@@ -79,9 +78,7 @@ const Navbar: React.FC = () => {
           <Link
             to="/export-report"
             className={`flex items-center space-x-2 p-2 rounded-md ${
-              isActive("/export-report")
-                ? "bg-indigo-900 text-white"
-                : "hover:bg-black hover:text-white"
+              isActive("/export-report") ? "bg-indigo-900 text-white" : "hover:bg-black hover:text-white"
             }`}
           >
             <FiFileText className="w-5 h-5" />
@@ -89,22 +86,21 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
 
-
-        {/* Conditional rendering for login/signup or logout */}
+        {/* Desktop Logout Button */}
         <div className="hidden md:flex space-x-6">
           {!isAuthenticated ? (
             <>
               <Link
                 to="/login"
-                className="hidden text-white md:flex items-center space-x-2 p-2 rounded-md bg-black hover:bg-white hover:text-black"
+                className="text-white p-2 rounded-md bg-black hover:bg-white hover:text-black"
               >
-                <span>Login</span>
+                Login
               </Link>
               <Link
                 to="/signup"
-                className="hidden text-white md:flex items-center space-x-2 p-2 rounded-md bg-black hover:bg-white hover:text-black"
+                className="text-white p-2 rounded-md bg-black hover:bg-white hover:text-black"
               >
-                <span>Sign Up</span>
+                Sign Up
               </Link>
             </>
           ) : (
@@ -118,26 +114,81 @@ const Navbar: React.FC = () => {
           )}
         </div>
 
-        {/* Mobile Menu Toggle */}
+        {/* Mobile Menu Toggle Button */}
         <div className="md:hidden flex items-center">
-          <button className="text-white">
-            {/* Mobile hamburger icon goes here */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white">
+            {isMobileMenuOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
           </button>
         </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <div className={`${isMobileMenuOpen ? "block" : "hidden"} md:hidden bg-gray-900 p-4`}>
+        <Link
+          to="/dashboard"
+          className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Dashboard
+        </Link>
+        <Link
+          to="/transactions"
+          className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Transactions
+        </Link>
+        <Link
+          to="/budgets"
+          className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Budgets
+        </Link>
+        <Link
+          to="/currency-converter"
+          className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Currency Converter
+        </Link>
+        <Link
+          to="/export-report"
+          className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Export Report
+        </Link>
+
+        {/* Mobile Logout/Login Buttons */}
+        {!isAuthenticated ? (
+          <>
+            <Link
+              to="/login"
+              className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              className="block text-white py-2 hover:bg-gray-700 px-4 rounded"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Sign Up
+            </Link>
+          </>
+        ) : (
+          <button
+            onClick={() => {
+              handleLogout();
+              setIsMobileMenuOpen(false);
+            }}
+            className="block w-full text-left text-white py-2 hover:bg-gray-700 px-4 rounded"
+          >
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );

@@ -165,22 +165,11 @@ export const fetchSpendingAnalysis = async (params: {
     if (!setAuthToken()) {
       await refreshAccessToken();
     }
-    const response = await api.get("/spending-analysis/", { 
-      params,
-      validateStatus: (status) => status === 200 || status === 404
-    });
-
-    if (response.status === 404) {
-      throw new Error("No analysis data found");
-    }
-
-    return response.data;
+    const response = await api.get("/spending-analysis/", { params });
+    console.log(response)
+    return response.data; // Ensure this returns { monthly_trend, category_breakdown, recent_transactions }
   } catch (error: any) {
-    if (error.response?.status === 401) {
-      await refreshAccessToken();
-      return fetchSpendingAnalysis(params);
-    }
-    throw new Error(error.response?.data?.message || error.message || "Analysis failed");
+    throw new Error(error.response?.data?.message || "Failed to fetch spending analysis");
   }
 };
 
@@ -284,5 +273,21 @@ export const createTransaction = async (transactionData: {
     throw new Error(
       error.response?.data?.message || "Failed to create transaction"
     );
+  }
+};
+
+// 🔹 Delete Transaction
+export const deleteTransaction = async (id: number) => {
+  try {
+    if (!setAuthToken()) {
+      await refreshAccessToken();
+    }
+    await api.delete(`/transactions/${id}/`);
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      await refreshAccessToken();
+      return deleteTransaction(id);
+    }
+    throw new Error(error.response?.data?.message || "Failed to delete transaction");
   }
 };

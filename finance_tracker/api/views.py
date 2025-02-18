@@ -11,6 +11,7 @@ import logging
 from django.http import HttpResponse
 from .models import Transaction, Budget
 from .serializers import TransactionSerializer, BudgetSerializer
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +35,18 @@ class TransactionListCreateView(generics.ListCreateAPIView):
         """Automatically associate the transaction with the logged-in user"""
         serializer.save(user=self.request.user)
     
-    
+
+# New view for deleting transactions
+class TransactionDeleteView(generics.DestroyAPIView):
+    queryset = Transaction.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        transaction = self.get_object()
+        if transaction.user != request.user:
+            return Response({"error": "You do not have permission to delete this transaction."}, status=status.HTTP_403_FORBIDDEN)
+        return super().delete(request, *args, **kwargs)
+
 # Budget endpoints with dynamically computed fields
 class BudgetListCreateView(generics.ListCreateAPIView):
     serializer_class = BudgetSerializer
@@ -157,3 +169,74 @@ class CurrencyConversionView(APIView):
             converted_amount = data.get("result")
             if converted_amount is not None:
                 return Response({"converted_amount": converted_amount})
+            
+
+
+
+class SpendingAnalysisView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+        category = request.query_params.get("category")
+
+        logger.info(f"Received request with start_date: {start_date}, end_date: {end_date}, category: {category}")
+
+        # Filter transactions based on the provided date range and category
+        transactions = Transaction.objects.filter(user=request.user)
+
+        # Validate date range
+        if start_date and end_date:
+            try:
+              # Convert naive datetime to timezone-aware datetime
+                start_date = timezone.make_aware(datetime.datetime.strptime(start_date, '%Y-%m-%d'))
+                end_date = timezone.make_aware(datetime.datetime.strptime(end_date, '%Y-%m-%d'))
+                transactions = transactions.filter(transaction_date__range=[start_date, end_date])
+            except Exception as e:
+                logger.error(f"Error filtering transactions: {str(e)}")
+            return Response({"error": "Invalid date range provided."}, status=400)
+        
+        if category and category != "all":
+            transactions = transactions.filter(category=category)
+
+        # Check if transactions exist
+        if not transactions.exists():
+            logger.warning("No transactions found for the given filters.")
+            return Response({"message": "No transactions found for the given filters."}, status=404)
+
+        # Calculate monthly trend
+        monthly_trend = (
+            transactions
+            .extra(select={'month': "DATE_TRUNC('month', transaction_date)"})
+            .values('month')
+            .annotate(total=Sum('amount'))
+            .order_by('month')
+        )
+
+        # Prepare data for monthly trend
+        trend_labels = [entry['month'].strftime('%Y-%m') for entry in monthly_trend]
+        trend_values = [entry['total'] for entry in monthly_trend]
+
+        # Calculate category breakdown
+        category_breakdown = (
+            transactions
+            .values('category')
+            .annotate(total=Sum('amount'))
+        )
+
+        # Prepare data for category breakdown
+        breakdown_labels = [entry['category'] for entry in category_breakdown]
+        breakdown_values = [entry['total'] for entry in category_breakdown]
+
+        return Response({
+            "monthly_trend": {
+                "labels": trend_labels,
+                "values": trend_values,
+            },
+            "category_breakdown": {
+                "labels": breakdown_labels,
+                "values": breakdown_values,
+            },
+            "recent_transactions": transactions.order_by('-transaction_date')[:5],  # Get the last 5 transactions
+        })

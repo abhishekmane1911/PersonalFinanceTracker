@@ -10,7 +10,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [summary, setSummary] = useState<any>(null);
   const [analysis, setAnalysis] = useState<any>(null);
-  const [month, setMonth] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [category, setCategory] = useState("all");
@@ -22,19 +21,19 @@ const Dashboard = () => {
       navigate("/login");
       return;
     }
-    const now = new Date();
-    const defaultMonth = now.toISOString().slice(0, 7);
-    setMonth(defaultMonth);
-    loadData(defaultMonth, "", "all");
+    const now = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+    setStartDate(now);
+    setEndDate(now);
+    loadData(now, now, "all");
   }, [navigate]);
 
-  const loadData = async (month: string, range: string, category: string) => {
+  const loadData = async (start: string, end: string, category: string) => {
     setLoading(true);
     try {
-      const summaryData = await fetchMonthlySummary(month);
+      const summaryData = await fetchMonthlySummary(start);
       const analysisData = await fetchSpendingAnalysis({
-        start_date: startDate,
-        end_date: endDate,
+        start_date: start,
+        end_date: end,
         category: category !== "all" ? category : undefined,
       });
 
@@ -49,40 +48,11 @@ const Dashboard = () => {
 
   const handleFilterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loadData(month, `${startDate}|${endDate}`, category);
-  };
-
-  // Chart configuration functions
-  const spendingTrendConfig = {
-    labels: analysis?.monthly_trend.labels || [],
-    datasets: [
-      {
-        label: "Spending Trend",
-        data: analysis?.monthly_trend.values || [],
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
-      },
-    ],
-  };
-
-  const categoryDistributionConfig = {
-    labels: analysis?.category_breakdown.labels || [],
-    datasets: [
-      {
-        data: analysis?.category_breakdown.values || [],
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4BC0C0",
-          "#9966FF",
-        ],
-      },
-    ],
+    loadData(startDate, endDate, category);
   };
 
   return (
-    <div className="p-6 text-black min-h-screen ">
+    <div className="p-6 text-black min-h-screen">
       <h1 className="text-3xl font-semibold mb-6 text-center">
         Financial Dashboard
       </h1>
@@ -91,6 +61,7 @@ const Dashboard = () => {
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
         <form onSubmit={handleFilterSubmit} className="space-y-4">
           <div className="flex flex-wrap gap-4">
+            {/* Date Range Inputs */}
             <div className="flex flex-col w-full sm:w-1/2 md:w-1/3">
               <label className="text-gray-700">Date Range:</label>
               <div className="flex gap-2">
@@ -110,6 +81,7 @@ const Dashboard = () => {
               </div>
             </div>
 
+            {/* Category Filter */}
             <div className="flex flex-col w-full sm:w-1/2 md:w-1/3">
               <label className="text-gray-700">Category:</label>
               <select
@@ -164,25 +136,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Charts Section */}
-      {analysis && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-center text-gray-700">
-              Spending Trend
-            </h3>
-            <Line data={spendingTrendConfig} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-center text-gray-700">
-              Category Distribution
-            </h3>
-            <Pie data={categoryDistributionConfig} />
-          </div>
-        </div>
-      )}
-
       {/* Transaction List Preview */}
       {analysis?.recent_transactions && (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
@@ -200,10 +153,10 @@ const Dashboard = () => {
               {analysis.recent_transactions.map((tx: any) => (
                 <tr key={tx.id}>
                   <td className="border-b py-2 px-4">
-                    {new Date(tx.transaction_date).toLocaleDateString()}
+                    {new Date(tx.transaction_date).toISOString().split("T")[0]}
                   </td>
                   <td className="border-b py-2 px-4">
-                    ${tx.amount.toFixed(2)}
+                    ${Number(tx.amount).toFixed(2)}
                   </td>
                   <td className="border-b py-2 px-4">{tx.category}</td>
                   <td className="border-b py-2 px-4">{tx.description}</td>
